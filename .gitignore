@@ -1,0 +1,39 @@
+# Ignore build directories
+bin/
+test_bin/
+
+# Ignore object files and libraries
+*.o
+*.a
+*.so
+
+# Ignore compiled binaries
+*.out
+*.exe
+
+# Ignore core dumps
+core
+
+# Ignore macOS metadata
+.DS_Store
+
+# Ignore Vim swap files
+*.swp
+*.swo
+*.swn
+
+# Ignore other editor backup and temporary files
+*~
+*.bak
+*.tmp
+
+# Ignore IDE project files
+.vscode/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+*.idea/
+*.project
+*.cproject
+*.settings/
+
