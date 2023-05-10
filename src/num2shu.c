@@ -55,19 +55,19 @@ int should_use_liang(int i, int j, int block_len, int num_blocks) {
 void num2shu(const char *const num_str) {
   size_t len = strlen(num_str);
   if (len == 1 && num_str[0] == '0') {
-    printf(zero_character);
+    printf("%s", zero_character);
     printf("\n");
     return;
   }
 
   if (is_negative) {
-    printf(negative_character);
+    printf("%s", negative_character);
   }
 
   if (s_flag || r_flag) {
     for (size_t i = 0; i < len; i++) {
       if (num_str[i] == '0') {
-        printf(zero_character);
+        printf("%s", zero_character);
       }
       else {
         printf("%s", chinese_numerals[num_str[i] - '0']);
@@ -111,7 +111,7 @@ void num2shu(const char *const num_str) {
         printf("%s", chinese_units[block_len - j - 1]);
       }
       else if (j < block_len - 1 && blocks[i][j + 1] != '0') {
-        printf(zero_character);
+        printf("%s", zero_character);
       }
     }
     if (i > 0 && atoi(blocks[i]) != 0) {
