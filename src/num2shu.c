@@ -15,6 +15,8 @@
 #define LIANG_CHARACTER_TC "兩"
 #define NEGATIVE_CHARACTER_SC "负"
 #define NEGATIVE_CHARACTER_TC "負"
+#define DIAN_CHARACTER_SC "点"
+#define DIAN_CHARACTER_TC "點"
 
 static char *chinese_numerals_sc[NUM_NUMERALS]       = {"", "一", "二", "三", "四", "五", "六", "七", "八", "九"};
 static char *chinese_numerals_tc[NUM_NUMERALS]       = {"", "一", "二", "三", "四", "五", "六", "七", "八", "九"};
@@ -34,6 +36,7 @@ static char **chinese_units = chinese_units_sc;
 static char *zero_character = ZERO_CHARACTER;
 static char *liang_character = LIANG_CHARACTER_SC;
 static char *negative_character = NEGATIVE_CHARACTER_SC;
+static char *dian_character = DIAN_CHARACTER_SC;
 
 static int t_flag = 0;
 static int f_flag = 0;
@@ -43,13 +46,28 @@ static int s_flag = 0;
 static int r_flag = 0;
 
 static int is_negative = 0;
+static int is_decimal = 0;
 
 static char *program_name;
 
+void num2shu_dec(const char *const decimal_part) {
+  size_t len = strlen(decimal_part);
+  printf("%s", dian_character);
+  for (size_t i = 0; i < len; i++) {
+    if (decimal_part[i] == '0') {
+      printf(zero_character);
+    }
+    else {
+      printf("%s", chinese_numerals[decimal_part[i] - '0']);
+    }
+  }
+  printf("\n");
+}
+
 int should_use_liang(int i, int j, int block_len, int num_blocks) {
   return (block_len > 2 && j < block_len - 2) || // If numeral for an inner 100 or 1000 unit.
-         (num_blocks > 1 && i > 0 && // If 10000 or greater.
-          block_len == 1); // Single number in block.
+    (num_blocks > 1 && i > 0 && // If 10000 or greater.
+     block_len == 1); // Single number in block.
 }
 
 void num2shu(const char *const num_str) {
@@ -73,58 +91,61 @@ void num2shu(const char *const num_str) {
         printf("%s", chinese_numerals[num_str[i] - '0']);
       }
     }
-    printf("\n");
     return;
-  }
+  } else {
 
-  int num_blocks = (len % 4 == 0) ? len / 4 : len / 4 + 1;
-  char **blocks = malloc(num_blocks * sizeof(char *));
-  for (int i = 0; i < num_blocks; i++) {
-    int start = len - (i + 1) * 4; // Start scanning from first character of last block
-    if (start < 0) {
-      start = 0;
+
+    int num_blocks = (len % 4 == 0) ? len / 4 : len / 4 + 1;
+    char **blocks = malloc(num_blocks * sizeof(char *));
+    for (int i = 0; i < num_blocks; i++) {
+      int start = len - (i + 1) * 4; // Start scanning from first character of last block
+      if (start < 0) {
+        start = 0;
+      }
+
+      int block_size = (i == num_blocks - 1) ? len % 4 : 4;
+      if (block_size == 0) block_size = 4; // For when len is a multiple of 4
+      blocks[i] = malloc((block_size + 1) * sizeof(char));
+      strncpy(blocks[i], &num_str[start], block_size);
+      blocks[i][block_size] = '\0';
     }
 
-    int block_size = (i == num_blocks - 1) ? len % 4 : 4;
-    if (block_size == 0) block_size = 4; // For when len is a multiple of 4
-    blocks[i] = malloc((block_size + 1) * sizeof(char));
-    strncpy(blocks[i], &num_str[start], block_size);
-    blocks[i][block_size] = '\0';
-  }
-
-  for (int i = num_blocks - 1; i >= 0; i--) { // For blocks in descending magnitude
-    int block_len = strlen(blocks[i]);
-    for (int j = 0; j < block_len; j++) {
-      if (blocks[i][j] != '0') {
-        if ((j != 0) ||
-            (blocks[i][j] != '1') ||
-            (block_len <= 1) ||
-            (chinese_units[block_len - 1] != SHI_CHARACTER))
-        {
-          if (n_flag && blocks[i][j] == '2' && should_use_liang(i, j, block_len, num_blocks)) {
-            printf("%s", liang_character);
+    for (int i = num_blocks - 1; i >= 0; i--) { // For blocks in descending magnitude
+      int block_len = strlen(blocks[i]);
+      for (int j = 0; j < block_len; j++) {
+        if (blocks[i][j] != '0') {
+          if ((j != 0) ||
+              (blocks[i][j] != '1') ||
+              (block_len <= 1) ||
+              (chinese_units[block_len - 1] != SHI_CHARACTER))
+          {
+            if (n_flag && blocks[i][j] == '2' && should_use_liang(i, j, block_len, num_blocks)) {
+              printf("%s", liang_character);
+            }
+            else {
+              printf("%s", chinese_numerals[blocks[i][j] - '0']);
+            }
           }
-          else {
-            printf("%s", chinese_numerals[blocks[i][j] - '0']);
-          }
+          printf("%s", chinese_units[block_len - j - 1]);
         }
-        printf("%s", chinese_units[block_len - j - 1]);
+        else if (j < block_len - 1 && blocks[i][j + 1] != '0') {
+          printf("%s", zero_character);
+        }
       }
-      else if (j < block_len - 1 && blocks[i][j + 1] != '0') {
-        printf("%s", zero_character);
+      if (i > 0 && atoi(blocks[i]) != 0) {
+        printf("%s", chinese_units[4 + i - 1]);
       }
     }
-    if (i > 0 && atoi(blocks[i]) != 0) {
-      printf("%s", chinese_units[4 + i - 1]);
+
+    if (!is_decimal) {
+      printf("\n");
     }
-  }
 
-  printf("\n");
-
-  for (int i = 0; i < num_blocks; i++) {
-    free(blocks[i]);
+    for (int i = 0; i < num_blocks; i++) {
+      free(blocks[i]);
+    }
+    free(blocks);
   }
-  free(blocks);
 }
 
 void check_negative(char *num_str) {
@@ -136,17 +157,35 @@ void check_negative(char *num_str) {
   }
 }
 
-void strip_nonnumeric(char *num_str) {
+char *extract_parts(char *num_str) {
   size_t len = strlen(num_str);
+  size_t i = 0;
   size_t j = 0;
 
-  for (size_t i = 0; i < len; i++) {
+  char *decimal_part = malloc((len) * sizeof(char));
+
+  while (i < len) {
     if (isdigit(num_str[i])) {
       num_str[j] = num_str[i];
       j++;
+    } else if (num_str[i] == '.') { // Start creating decimal part
+      break;
     }
+    i++;
+  }
+
+  size_t k = 0;
+  while (i < len) {
+    if (isdigit(num_str[i])) {
+      is_decimal = 1;
+      decimal_part[k] = num_str[i];
+      k++;
+    }
+    i++;
   }
   num_str[j] = '\0';
+  decimal_part[k] = '\0';
+  return decimal_part;
 }
 
 void trim_leading_zeros(char *num_str) {
@@ -170,21 +209,25 @@ void trim_leading_zeros(char *num_str) {
 
 void check_length(char *num_str) {
   if (strlen(num_str) > 49) {
-    printf("Number too large, must be under 1 quindecillion (a one with 48 zeroes).");
+    printf("Number too large, must be under 1 quindecillion (10^48).");
     exit(1);
   }
 }
 
-void preprocess(char *num_str) {
+char *preprocess(char *num_str) {
   check_negative(num_str);
-  strip_nonnumeric(num_str);
+  char *decimal_part = extract_parts(num_str);
   trim_leading_zeros(num_str);
   check_length(num_str);
+  return decimal_part;
 }
 
 void process_input(char *num_str) {
-  preprocess(num_str);
+  char *decimal = preprocess(num_str);
   num2shu(num_str);
+  if (strlen(decimal)) {
+    num2shu_dec(decimal);
+  }
 }
 
 void print_help(FILE *out) {
@@ -253,20 +296,21 @@ int main(int argc, char *argv[]) {
     chinese_units = chinese_units_fin_tc;
     n_flag = 0;
     z_flag = 0;
-  }
-  else if (f_flag) {
+  } else if (f_flag) {
     chinese_numerals = chinese_numerals_fin_sc;
     chinese_units = chinese_units_fin_sc;
     n_flag = 0;
     z_flag = 0;
-  }
-  else if (t_flag) {
+  } else if (t_flag) {
     chinese_numerals = chinese_numerals_tc;
     chinese_units = chinese_units_tc;
-  }
-  else {
+  } else {
     chinese_numerals = chinese_numerals_sc;
     chinese_units = chinese_units_sc;
+  }
+
+  if (t_flag) {
+    dian_character = DIAN_CHARACTER_TC;
   }
 
   if (z_flag) {
@@ -276,8 +320,7 @@ int main(int argc, char *argv[]) {
   if (r_flag) {
     if (t_flag) {
       chinese_numerals = chinese_numerals_radio_tc;
-    }
-    else {
+    } else {
       chinese_numerals = chinese_numerals_radio_sc;
     }
     zero_character = ZERO_CHARACTER_RADIO;
@@ -290,22 +333,19 @@ int main(int argc, char *argv[]) {
   if (optind < argc) {
     char *num_str = argv[optind];
     process_input(num_str);
-  }
-  else {
+  } else {
     // No arguments provided, read from stdin
     char buf[BUFSIZ];
     if (fgets(buf, sizeof(buf), stdin) != NULL) {
       if (buf[strlen(buf) - 1] == '\n') {
         buf[strlen(buf) - 1] = '\0'; // Replace newline with null terminator
         process_input(buf);
-      }
-      else {
+      } else {
         // Line was truncated
         printf("Input line was too long.\n");
         return 1;
       }
-    }
-    else {
+    } else {
       printf("Error reading input from stdin.\n");
       return 1;
     }

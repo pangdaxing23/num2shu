@@ -4,6 +4,8 @@ A versatile tool to convert numbers into various Chinese numeral representations
 
 Numbers must be under 1 quindecillion (10<sup>48</sup>).
 
+Decimal numbers supported.
+
 ## Installation
 
 `make && make install`
@@ -31,7 +33,7 @@ Without options: 二百一十二亿零三百四十五万六千七百八十九
 | `-r`           | `--radio`       | Like `-s`, but use unambiguous radio numerals. (Overrides `z`)   | 两幺两洞三四五六拐八勾
 
 ### Notes:
-1. These options combine generally, e.g.: if both `-t` and `-f` are passed, traditional financial units will be used.
+1. These options combine generally, e.g.: if both `-t` and `-f` are passed, traditional financial numerals will be used.
 2. To convert negative numbers, prepend with the end-of-options marker `--`, e.g.: `num2shu -t -- -88`
 
 ## Development
