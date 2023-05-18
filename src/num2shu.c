@@ -55,7 +55,7 @@ void num2shu_dec(const char *const decimal_part) {
   printf("%s", dian_character);
   for (size_t i = 0; i < len; i++) {
     if (decimal_part[i] == '0') {
-      printf(zero_character);
+      printf("%s", zero_character);
     }
     else {
       printf("%s", chinese_numerals[decimal_part[i] - '0']);
