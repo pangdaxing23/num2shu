@@ -61,7 +61,6 @@ void num2shu_dec(const char *const decimal_part) {
       printf("%s", chinese_numerals[decimal_part[i] - '0']);
     }
   }
-  printf("\n");
 }
 
 int should_use_liang(int i, int j, int block_len, int num_blocks) {
@@ -77,9 +76,6 @@ void num2shu(const char *const num_str) {
       printf("%s", negative_character);
     }
     printf("%s", zero_character);
-    if (!is_decimal) {
-      printf("\n");
-    }
     return;
   }
 
@@ -146,10 +142,6 @@ void num2shu(const char *const num_str) {
         printf("%s", chinese_units[4 + i - 1]);
         in_zero_run = 0; // Trailing zeros in a block are absorbed by its magnitude unit
       }
-    }
-
-    if (!is_decimal) {
-      printf("\n");
     }
 
     for (int i = 0; i < num_blocks; i++) {
@@ -239,6 +231,7 @@ void process_input(char *num_str) {
   if (strlen(decimal)) {
     num2shu_dec(decimal);
   }
+  printf("\n");
 }
 
 void print_help(FILE *out) {
