@@ -14,7 +14,7 @@ Decimal numbers supported.
 
 `num2shu [-htfznsr] <number>`
 
-Nondigit characters will be stripped except for a single leading `-` for negative numbers (see Note 2).
+Non-digit characters will be stripped except for a single leading `-` for negative numbers (see Note 2).
 
 ## Options
 
@@ -30,10 +30,10 @@ Without options: 二百一十二亿零三百四十五万六千七百八十九
 | `-z`           | `--zero`        | Use the alternative "zero" character (〇).                       | 二百一十二亿〇三百四十五万六千七百八十九
 | `-n`           | `--natural`     | Use "两" for "two" in certain contexts.                          | 两百一十二亿零三百四十五万六千七百八十九
 | `-s`           | `--simple`      | No magnitudes, just simple numeral replacement. (Overrides `-n`) | 二一二零三四五六七八九
-| `-r`           | `--radio`       | Like `-s`, but use unambiguous radio numerals. (Overrides `z`)   | 两幺两洞三四五六拐八勾
+| `-r`           | `--radio`       | Like `-s`, but use unambiguous radio numerals. (Overrides `-z`)  | 两幺两洞三四五六拐八勾
 
 ### Notes:
-1. These options combine generally, e.g.: if both `-t` and `-f` are passed, traditional financial numerals will be used.
+1. These options combine generally, e.g., if both `-t` and `-f` are passed, traditional financial numerals will be used.
 2. To convert negative numbers, prepend with the end-of-options marker `--`, e.g.: `num2shu -t -- -88`
 
 ## Development

@@ -110,10 +110,18 @@ void num2shu(const char *const num_str) {
       blocks[i][block_size] = '\0';
     }
 
+    int in_zero_run = 0;
     for (int i = num_blocks - 1; i >= 0; i--) { // For blocks in descending magnitude
       int block_len = strlen(blocks[i]);
       for (int j = 0; j < block_len; j++) {
-        if (blocks[i][j] != '0') {
+        if (blocks[i][j] == '0') {
+          in_zero_run = 1;
+        }
+        else {
+          if (in_zero_run) {
+            printf("%s", zero_character);
+            in_zero_run = 0;
+          }
           if ((j != 0) ||
               (blocks[i][j] != '1') ||
               (block_len <= 1) ||
@@ -128,12 +136,10 @@ void num2shu(const char *const num_str) {
           }
           printf("%s", chinese_units[block_len - j - 1]);
         }
-        else if (j < block_len - 1 && blocks[i][j + 1] != '0') {
-          printf("%s", zero_character);
-        }
       }
       if (i > 0 && atoi(blocks[i]) != 0) {
         printf("%s", chinese_units[4 + i - 1]);
+        in_zero_run = 0; // Trailing zeros in a block are absorbed by its magnitude unit
       }
     }
 
