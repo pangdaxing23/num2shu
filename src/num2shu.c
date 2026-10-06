@@ -8,7 +8,6 @@
 #define NUM_UNITS 16
 #define MAX_DIGITS ((NUM_UNITS - 3) * 4) // One 4-digit block per magnitude unit (万 and up) plus the lowest block
 #define NUM_NUMERALS 10
-#define SHI_CHARACTER chinese_units[1]
 #define ZERO_CHARACTER "零"
 #define ZERO_CHARACTER_ALT "〇"
 #define ZERO_CHARACTER_RADIO "洞"
@@ -130,8 +129,8 @@ void num2shu(const char *const num_str) {
           }
           if ((j != 0) ||
               (blocks[i][j] != '1') ||
-              (block_len <= 1) ||
-              (chinese_units[block_len - 1] != SHI_CHARACTER))
+              (block_len != 2) || // Only drop the 一 of a leading 十
+              (f_flag)) // Financial mode never drops 壹
           {
             if (n_flag && blocks[i][j] == '2' && should_use_liang(i, j, block_len, num_blocks)) {
               printf("%s", liang_character);
