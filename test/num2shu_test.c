@@ -43,7 +43,7 @@ static void test_num2shu(const char* program_name) {
     const char* input = test_case->input;
     const char* expected_output = test_case->expected_output;
 
-    snprintf(command, sizeof(command), "%s %s", program_name, input);
+    snprintf(command, sizeof(command), "%s %s 2>&1", program_name, input);
     printf("Running test case %d:\n", i + 1);
     printf("Command: %s\n", command);
     execute_command(command, case_output, sizeof(case_output));

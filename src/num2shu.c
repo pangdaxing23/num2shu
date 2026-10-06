@@ -212,7 +212,7 @@ void trim_leading_zeros(char *num_str) {
 
 void check_length(char *num_str) {
   if (strlen(num_str) > MAX_DIGITS) {
-    printf("Number too large, must be under 10 sexdecillion (10^52).");
+    fprintf(stderr, "Number too large, must be under 10 sexdecillion (10^52).\n");
     exit(1);
   }
 }
@@ -346,12 +346,12 @@ int main(int argc, char *argv[]) {
         buf[n - 1] = '\0'; // Replace newline with null terminator
       } else if (!feof(stdin)) {
         // Line was truncated
-        printf("Input line was too long.\n");
+        fprintf(stderr, "Input line was too long.\n");
         return 1;
       }
       process_input(buf);
     } else {
-      printf("Error reading input from stdin.\n");
+      fprintf(stderr, "Error reading input from stdin.\n");
       return 1;
     }
   }
