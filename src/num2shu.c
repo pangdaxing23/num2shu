@@ -72,9 +72,14 @@ int should_use_liang(int i, int j, int block_len, int num_blocks) {
 
 void num2shu(const char *const num_str) {
   size_t len = strlen(num_str);
-  if (len == 1 && num_str[0] == '0') {
+  if (len == 0 || (len == 1 && num_str[0] == '0')) {
+    if (is_negative && is_decimal) {
+      printf("%s", negative_character);
+    }
     printf("%s", zero_character);
-    printf("\n");
+    if (!is_decimal) {
+      printf("\n");
+    }
     return;
   }
 
