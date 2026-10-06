@@ -2,7 +2,7 @@
 
 A versatile tool to convert numbers into various Chinese numeral representations and formats.
 
-Numbers must be under 1 quindecillion (10<sup>48</sup>).
+Numbers must be under 10 sexdecillion (10<sup>52</sup>).
 
 Decimal numbers supported.
 

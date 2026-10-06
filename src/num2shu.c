@@ -5,7 +5,8 @@
 #include <unistd.h>
 #include <getopt.h>
 
-#define NUM_UNITS 15
+#define NUM_UNITS 16
+#define MAX_DIGITS ((NUM_UNITS - 3) * 4) // One 4-digit block per magnitude unit (万 and up) plus the lowest block
 #define NUM_NUMERALS 10
 #define SHI_CHARACTER chinese_units[1]
 #define ZERO_CHARACTER "零"
@@ -25,10 +26,10 @@ static char *chinese_numerals_fin_tc[NUM_NUMERALS]   = {"", "壹", "貳", "參",
 static char *chinese_numerals_radio_sc[NUM_NUMERALS] = {"", "幺", "两", "三", "四", "五", "六", "拐", "八", "勾"};
 static char *chinese_numerals_radio_tc[NUM_NUMERALS] = {"", "幺", "兩", "三", "四", "五", "六", "拐", "八", "勾"};
 
-static char *chinese_units_sc[NUM_UNITS]             = {"", "十", "百", "千", "万", "亿", "兆", "京", "垓", "秭", "穰", "沟", "涧", "正", "载"};
-static char *chinese_units_tc[NUM_UNITS]             = {"", "十", "百", "千", "萬", "億", "兆", "京", "垓", "秭", "穰", "溝", "澗", "正", "載"};
-static char *chinese_units_fin_sc[NUM_UNITS]         = {"", "拾", "佰", "仟", "萬", "億", "兆", "京", "垓", "秭", "穰", "沟", "涧", "正", "载"};
-static char *chinese_units_fin_tc[NUM_UNITS]         = {"", "拾", "佰", "仟", "萬", "億", "兆", "京", "垓", "秭", "穰", "溝", "澗", "正", "載"};
+static char *chinese_units_sc[NUM_UNITS]             = {"", "十", "百", "千", "万", "亿", "兆", "京", "垓", "秭", "穰", "沟", "涧", "正", "载", "极"};
+static char *chinese_units_tc[NUM_UNITS]             = {"", "十", "百", "千", "萬", "億", "兆", "京", "垓", "秭", "穰", "溝", "澗", "正", "載", "極"};
+static char *chinese_units_fin_sc[NUM_UNITS]         = {"", "拾", "佰", "仟", "萬", "億", "兆", "京", "垓", "秭", "穰", "沟", "涧", "正", "载", "极"};
+static char *chinese_units_fin_tc[NUM_UNITS]         = {"", "拾", "佰", "仟", "萬", "億", "兆", "京", "垓", "秭", "穰", "溝", "澗", "正", "載", "極"};
 
 static char **chinese_numerals = chinese_numerals_sc;
 static char **chinese_units = chinese_units_sc;
@@ -219,8 +220,8 @@ void trim_leading_zeros(char *num_str) {
 }
 
 void check_length(char *num_str) {
-  if (strlen(num_str) > 49) {
-    printf("Number too large, must be under 1 quindecillion (10^48).");
+  if (strlen(num_str) > MAX_DIGITS) {
+    printf("Number too large, must be under 10 sexdecillion (10^52).");
     exit(1);
   }
 }
