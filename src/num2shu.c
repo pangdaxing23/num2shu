@@ -341,14 +341,15 @@ int main(int argc, char *argv[]) {
     // No arguments provided, read from stdin
     char buf[BUFSIZ];
     if (fgets(buf, sizeof(buf), stdin) != NULL) {
-      if (buf[strlen(buf) - 1] == '\n') {
-        buf[strlen(buf) - 1] = '\0'; // Replace newline with null terminator
-        process_input(buf);
-      } else {
+      size_t n = strlen(buf);
+      if (n > 0 && buf[n - 1] == '\n') {
+        buf[n - 1] = '\0'; // Replace newline with null terminator
+      } else if (!feof(stdin)) {
         // Line was truncated
         printf("Input line was too long.\n");
         return 1;
       }
+      process_input(buf);
     } else {
       printf("Error reading input from stdin.\n");
       return 1;
