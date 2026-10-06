@@ -46,7 +46,6 @@ static int s_flag = 0;
 static int r_flag = 0;
 
 static int is_negative = 0;
-static int is_decimal = 0;
 
 static char *program_name;
 
@@ -71,16 +70,13 @@ int should_use_liang(int i, int j, int block_len, int num_blocks) {
 
 void num2shu(const char *const num_str) {
   size_t len = strlen(num_str);
-  if (len == 0 || (len == 1 && num_str[0] == '0')) {
-    if (is_negative && is_decimal) {
-      printf("%s", negative_character);
-    }
-    printf("%s", zero_character);
-    return;
-  }
-
   if (is_negative) {
     printf("%s", negative_character);
+  }
+
+  if (len == 0 || (len == 1 && num_str[0] == '0')) {
+    printf("%s", zero_character);
+    return;
   }
 
   if (s_flag || r_flag) {
@@ -180,7 +176,6 @@ char *extract_parts(char *num_str) {
   size_t k = 0;
   while (i < len) {
     if (isdigit(num_str[i])) {
-      is_decimal = 1;
       decimal_part[k] = num_str[i];
       k++;
     }
@@ -222,6 +217,9 @@ char *preprocess(char *num_str) {
   char *decimal_part = extract_parts(num_str);
   trim_leading_zeros(num_str);
   check_length(num_str);
+  if (strspn(num_str, "0") == strlen(num_str) && strspn(decimal_part, "0") == strlen(decimal_part)) {
+    is_negative = 0; // Negative zero is just zero
+  }
   return decimal_part;
 }
 
